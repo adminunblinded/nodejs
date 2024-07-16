@@ -22,24 +22,24 @@
                 <h2 class="text-2xl font-semibold mb-6">Empower Your Decision-Making with Instant Deal Analysis!</h2>
                 <form id="underwriting-calculator-form">
                     <div class="mb-4 relative">
-                        <label class="block text-gray-700 font-semibold mb-2" for="disposable-income-goal">11X Plan Disposable Income Goal:</label>
+                        <label class="block text-gray-700 font-semibold mb-2" for="extra-income">Amount of Extra Income Wanted:</label>
                         <div class="relative">
                             <i class="fas fa-dollar-sign absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                            <input class="w-full p-2 pl-10 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-color" type="number" id="disposable-income-goal" name="disposable-income-goal" placeholder="Enter the goal" aria-label="11X Plan Disposable Income Goal">
+                            <input class="w-full p-2 pl-10 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-color" type="number" id="extra-income" name="extra-income" placeholder="Enter the amount" aria-label="Extra Income Wanted">
                         </div>
                     </div>
                     <div class="mb-4 relative">
-                        <label class="block text-gray-700 font-semibold mb-2" for="current-disposable-income">Current Disposable Income (%):</label>
+                        <label class="block text-gray-700 font-semibold mb-2" for="time-window">Time Window (in months):</label>
                         <div class="relative">
-                            <i class="fas fa-percentage absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                            <input class="w-full p-2 pl-10 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-color" type="number" id="current-disposable-income" name="current-disposable-income" placeholder="Enter current disposable income" aria-label="Current Disposable Income">
+                            <i class="fas fa-calendar-alt absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                            <input class="w-full p-2 pl-10 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-color" type="number" id="time-window" name="time-window" placeholder="Enter number of months" aria-label="Time Window">
                         </div>
                     </div>
                     <div class="mb-4 relative">
-                        <label class="block text-gray-700 font-semibold mb-2" for="average-sale">Average Sale per Client:</label>
+                        <label class="block text-gray-700 font-semibold mb-2" for="average-investment">Average Investment per Client:</label>
                         <div class="relative">
-                            <i class="fas fa-shopping-cart absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                            <input class="w-full p-2 pl-10 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-color" type="number" id="average-sale" name="average-sale" placeholder="Enter average sale per client" aria-label="Average Sale per Client">
+                            <i class="fas fa-coins absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                            <input class="w-full p-2 pl-10 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-color" type="number" id="average-investment" name="average-investment" placeholder="Enter average investment" aria-label="Average Investment per Client">
                         </div>
                     </div>
                     <div class="mb-4 relative">
@@ -47,13 +47,6 @@
                         <div class="relative">
                             <i class="fas fa-chart-line absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
                             <input class="w-full p-2 pl-10 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-color" type="number" id="conversion-percentage" name="conversion-percentage" placeholder="Enter conversion percentage" aria-label="Conversion Percentage">
-                        </div>
-                    </div>
-                    <div class="mb-4 relative">
-                        <label class="block text-gray-700 font-semibold mb-2" for="fixed-costs">Fixed Costs (e.g., 20k):</label>
-                        <div class="relative">
-                            <i class="fas fa-file-invoice-dollar absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                            <input class="w-full p-2 pl-10 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary-color" type="number" id="fixed-costs" name="fixed-costs" placeholder="Enter fixed costs" aria-label="Fixed Costs">
                         </div>
                     </div>
                     <button type="submit" class="w-full bg-yellow-400 text-black py-3 rounded-md hover:bg-yellow-500 transition duration-300 ease-in-out transform hover:scale-105">Calculate</button>
@@ -64,21 +57,28 @@
                     <i class="fas fa-spinner fa-spin text-4xl text-yellow-400"></i>
                 </div>
                 <div class="text-center mb-6">
-                    <h3 class="text-xl font-bold">New Revenue Target</h3>
+                    <h3 class="text-xl font-bold">Number of Sales Needed</h3>
                     <div class="output-container">
-                        <p id="new-revenue-target" class="text-4xl font-bold result-animation text-yellow-400">$0</p>
+                        <p id="sales-needed" class="text-4xl font-bold result-animation text-yellow-400">0</p>
+                    </div>
+                </div>
+                <div class="text-center mb-6">
+                    <h3 class="text-xl font-bold">Sales Meetings Needed</h3>
+                    <div class="output-container">
+                        <p id="sales-meetings-needed" class="text-4xl font-bold result-animation text-yellow-400">0</p>
                     </div>
                 </div>
                 <div class="bg-yellow-400 text-center p-6 rounded-lg shadow-lg mb-6">
-                    <h3 class="text-xl font-bold text-black">Sales Needed</h3>
+                    <h3 class="text-xl font-bold text-black">Sales per Month</h3>
                     <div class="output-container">
-                        <p id="sales-needed" class="text-4xl font-bold text-black result-animation">$0</p>
+                        <p id="sales-per-month" class="text-4xl font-bold text-black result-animation">0</p>
                     </div>
                 </div>
                 <button id="cta-button" class="cta-button hidden">Get More Details</button>
             </div>
         </div>
     </main>
+    
     
     <div id="modal" class="modal">
         <div class="modal-content bg-white rounded-lg shadow-2xl max-w-md w-full mx-4">
@@ -129,7 +129,7 @@
             if (num >= 1e9) return (num / 1e9).toFixed(1) + 'B';
             if (num >= 1e6) return (num / 1e6).toFixed(1) + 'M';
             if (num >= 1e3) return (num / 1e3).toFixed(1) + 'K';
-            return num.toFixed(2);
+            return num.toFixed(0);
         }
         
         function validateForm() {
@@ -158,19 +158,18 @@
             loading.classList.remove('hidden');
         
             setTimeout(() => {
-                const disposableIncomeGoal = parseFloat(document.getElementById('disposable-income-goal').value);
-                const currentDisposableIncome = parseFloat(document.getElementById('current-disposable-income').value) / 100;
-                const averageSale = parseFloat(document.getElementById('average-sale').value);
+                const extraIncome = parseFloat(document.getElementById('extra-income').value);
+                const timeWindow = parseFloat(document.getElementById('time-window').value);
+                const averageInvestment = parseFloat(document.getElementById('average-investment').value);
                 const conversionPercentage = parseFloat(document.getElementById('conversion-percentage').value) / 100;
-                const fixedCosts = parseFloat(document.getElementById('fixed-costs').value);
         
-                const newRevenueTarget = disposableIncomeGoal / currentDisposableIncome;
-                const salesNeeded = newRevenueTarget / averageSale;
-                const totalSalesMeetings = salesNeeded / conversionPercentage;
-                const sharedExperiences = totalSalesMeetings / 10;
+                const salesNeeded = Math.ceil(extraIncome / averageInvestment);
+                const salesPerMonth = Math.ceil(salesNeeded / timeWindow);
+                const salesMeetingsNeeded = Math.ceil(salesNeeded / conversionPercentage);
         
-                document.getElementById('new-revenue-target').innerText = `$${formatNumber(newRevenueTarget)}`;
-                document.getElementById('sales-needed').innerText = `${formatNumber(salesNeeded)}`;
+                document.getElementById('sales-needed').innerText = formatNumber(salesNeeded);
+                document.getElementById('sales-per-month').innerText = formatNumber(salesPerMonth);
+                document.getElementById('sales-meetings-needed').innerText = formatNumber(salesMeetingsNeeded);
         
                 loading.classList.add('hidden');
                 document.getElementById('cta-button').classList.remove('hidden');
@@ -200,16 +199,14 @@
             const email = document.getElementById('email').value;
             const phone = document.getElementById('phone').value;
         
-            const disposableIncomeGoal = parseFloat(document.getElementById('disposable-income-goal').value);
-            const currentDisposableIncome = parseFloat(document.getElementById('current-disposable-income').value) / 100;
-            const averageSale = parseFloat(document.getElementById('average-sale').value);
+            const extraIncome = parseFloat(document.getElementById('extra-income').value);
+            const timeWindow = parseFloat(document.getElementById('time-window').value);
+            const averageInvestment = parseFloat(document.getElementById('average-investment').value);
             const conversionPercentage = parseFloat(document.getElementById('conversion-percentage').value) / 100;
-            const fixedCosts = parseFloat(document.getElementById('fixed-costs').value);
         
-            const newRevenueTarget = disposableIncomeGoal / currentDisposableIncome;
-            const salesNeeded = newRevenueTarget / averageSale;
-            const totalSalesMeetings = salesNeeded / conversionPercentage;
-            const sharedExperiences = totalSalesMeetings / 10;
+            const salesNeeded = Math.ceil(extraIncome / averageInvestment);
+            const salesPerMonth = Math.ceil(salesNeeded / timeWindow);
+            const salesMeetingsNeeded = Math.ceil(salesNeeded / conversionPercentage);
         
             fetch('https://nodejs-production-27d5.up.railway.app/proxy', {
                 method: 'POST',
@@ -220,10 +217,13 @@
                     fullName,
                     email,
                     phone,
-                    newRevenueTarget,
+                    extraIncome,
+                    timeWindow,
+                    averageInvestment,
+                    conversionPercentage,
                     salesNeeded,
-                    totalSalesMeetings,
-                    sharedExperiences
+                    salesPerMonth,
+                    salesMeetingsNeeded
                 })
             }).then(response => {
                 if (response.ok) {
