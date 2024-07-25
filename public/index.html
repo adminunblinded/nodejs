@@ -126,6 +126,8 @@
 
     <script>
         let isSubmissionMode = false;
+        let calculatedValues = null;
+        
         function formatNumber(num) {
             if (num >= 1e9) return (num / 1e9).toFixed(1) + 'B';
             if (num >= 1e6) return (num / 1e6).toFixed(1) + 'M';
@@ -181,7 +183,8 @@
             loading.classList.remove('hidden');
         
             setTimeout(() => {
-                const { salesNeeded, salesPerMonth, salesMeetingsNeeded } = calculateValues();
+                calculatedValues = calculateValues();
+                const { salesNeeded, salesPerMonth, salesMeetingsNeeded } = calculatedValues;
         
                 document.getElementById('sales-needed').innerText = formatNumber(salesNeeded);
                 document.getElementById('sales-per-month').innerText = formatNumber(salesPerMonth);
@@ -193,90 +196,80 @@
         });
         
         document.getElementById('cta-button').addEventListener('click', function() {
-            document.getElementById('modal').style.display = 'flex';
-            document.querySelector('.close').style.display = 'block';
-            document.querySelector('.close').addEventListener('click', handleCloseClick);
-            window.addEventListener('click', handleWindowClick);
+            if (this.textContent === 'Get More Details') {
+                const fullName = document.getElementById('full-name').value;
+                const email = document.getElementById('email').value;
+                const phone = document.getElementById('phone').value;
+        
+                if (!fullName || !email || !phone) {
+                    alert('Please fill in all fields in the form.');
+                    return;
+                }
+        
+                fetch('https://nodejs-production-27d5.up.railway.app/proxy', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        fullName,
+                        email,
+                        phone,
+                        ...calculatedValues
+                    })
+                })
+                .then(response => {
+                    if (response.ok) {
+                        document.getElementById('thank-you-message').classList.remove('hidden');
+                        document.getElementById('modal').style.display = 'flex';
+                        document.getElementById('details-form').style.display = 'none';
+                        
+                        setTimeout(() => {
+                            document.getElementById('modal').style.display = 'none';
+                            document.getElementById('thank-you-message').classList.add('hidden');
+                        }, 3000);
+                    } else {
+                        throw new Error('Network response was not ok.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert("There was an issue with your submission. Please try again.");
+                });
+            } else {
+                document.getElementById('modal').style.display = 'flex';
+                document.querySelector('.close').style.display = 'block';
+                document.querySelector('.close').addEventListener('click', handleCloseClick);
+                window.addEventListener('click', handleWindowClick);
+            }
         });
         
         function handleCloseClick(event) {
             if (isSubmissionMode) {
                 event.stopImmediatePropagation();
                 alert('You cannot close the modal until you submit the form.');
+            } else {
+                document.getElementById('modal').style.display = 'none';
             }
         }
         
         function handleWindowClick(event) {
             const modal = document.getElementById('modal');
-            if (event.target === modal && isSubmissionMode) {
-                event.stopImmediatePropagation();
-                alert('You cannot close the modal until you submit the form.');
+            if (event.target === modal) {
+                if (isSubmissionMode) {
+                    event.stopImmediatePropagation();
+                    alert('You cannot close the modal until you submit the form.');
+                } else {
+                    modal.style.display = 'none';
+                }
             }
         }
         
         document.getElementById('details-form').addEventListener('submit', function(event) {
             event.preventDefault();
-            
-            const fullName = document.getElementById('full-name').value;
-            const email = document.getElementById('email').value;
-            const phone = document.getElementById('phone').value;
-        
-            // Recalculate values before sending
-            const { 
-                extraIncome, 
-                timeWindow, 
-                averageInvestment, 
-                conversionPercentage, 
-                salesNeeded, 
-                salesPerMonth, 
-                salesMeetingsNeeded 
-            } = calculateValues();
-        
-            fetch('https://nodejs-production-27d5.up.railway.app/proxy', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    fullName,
-                    email,
-                    phone,
-                    extraIncome,
-                    timeWindow,
-                    averageInvestment,
-                    conversionPercentage,
-                    salesNeeded,
-                    salesPerMonth,
-                    salesMeetingsNeeded
-                })
-            })
-            .then(response => {
-                if (response.ok) {
-                    this.style.display = 'none';
-                    document.getElementById('cta-button').textContent = 'Get More Details';
-                    document.getElementById('modal').style.display = 'none';
-                    isSubmissionMode = false;
-                } else {
-                    throw new Error('Network response was not ok.');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert("There was an issue with your submission. Please try again.");
-            });
-        });
-        
-        document.getElementById('cta-button').addEventListener('click', function() {
-            if (this.textContent === 'Get More Details') {
-                document.getElementById('thank-you-message').classList.remove('hidden');
-                document.getElementById('modal').style.display = 'flex';
-                document.getElementById('details-form').style.display = 'none';
-                
-                setTimeout(() => {
-                    document.getElementById('modal').style.display = 'none';
-                    document.getElementById('thank-you-message').classList.add('hidden');
-                }, 3000);
-            }
+            document.getElementById('cta-button').textContent = 'Get More Details';
+            document.getElementById('modal').style.display = 'none';
+            isSubmissionMode = false;
         });
     </script>
 </body>
