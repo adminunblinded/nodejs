@@ -157,7 +157,15 @@
             const salesPerMonth = Math.ceil(salesNeeded / timeWindow);
             const salesMeetingsNeeded = Math.ceil(salesNeeded / conversionPercentage);
         
-            return { salesNeeded, salesPerMonth, salesMeetingsNeeded };
+            return { 
+                extraIncome, 
+                timeWindow, 
+                averageInvestment, 
+                conversionPercentage, 
+                salesNeeded, 
+                salesPerMonth, 
+                salesMeetingsNeeded 
+            };
         }
         
         document.getElementById('underwriting-calculator-form').addEventListener('submit', function(event) {
@@ -212,7 +220,17 @@
             const fullName = document.getElementById('full-name').value;
             const email = document.getElementById('email').value;
             const phone = document.getElementById('phone').value;
-            const { salesNeeded, salesPerMonth, salesMeetingsNeeded } = calculateValues();
+        
+            // Recalculate values before sending
+            const { 
+                extraIncome, 
+                timeWindow, 
+                averageInvestment, 
+                conversionPercentage, 
+                salesNeeded, 
+                salesPerMonth, 
+                salesMeetingsNeeded 
+            } = calculateValues();
         
             fetch('https://nodejs-production-27d5.up.railway.app/proxy', {
                 method: 'POST',
@@ -223,10 +241,10 @@
                     fullName,
                     email,
                     phone,
-                    extraIncome: parseFloat(document.getElementById('extra-income').value),
-                    timeWindow: parseFloat(document.getElementById('time-window').value),
-                    averageInvestment: parseFloat(document.getElementById('average-investment').value),
-                    conversionPercentage: parseFloat(document.getElementById('conversion-percentage').value) / 100,
+                    extraIncome,
+                    timeWindow,
+                    averageInvestment,
+                    conversionPercentage,
                     salesNeeded,
                     salesPerMonth,
                     salesMeetingsNeeded
