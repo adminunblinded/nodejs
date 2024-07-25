@@ -125,6 +125,7 @@
     </div>
 
     <script>
+        let isSubmissionMode = false;
         function formatNumber(num) {
             if (num >= 1e9) return (num / 1e9).toFixed(1) + 'B';
             if (num >= 1e6) return (num / 1e6).toFixed(1) + 'M';
@@ -136,7 +137,7 @@
             const inputs = document.querySelectorAll('input[type="number"]');
             let isValid = true;
             inputs.forEach(input => {
-                if (!input.value) {
+                if (!input.value || isNaN(input.value)) {
                     input.classList.add('border-red-500');
                     isValid = false;
                 } else {
@@ -144,6 +145,19 @@
                 }
             });
             return isValid;
+        }
+        
+        function calculateValues() {
+            const extraIncome = parseFloat(document.getElementById('extra-income').value);
+            const timeWindow = parseFloat(document.getElementById('time-window').value);
+            const averageInvestment = parseFloat(document.getElementById('average-investment').value);
+            const conversionPercentage = parseFloat(document.getElementById('conversion-percentage').value) / 100;
+        
+            const salesNeeded = Math.ceil(extraIncome / averageInvestment);
+            const salesPerMonth = Math.ceil(salesNeeded / timeWindow);
+            const salesMeetingsNeeded = Math.ceil(salesNeeded / conversionPercentage);
+        
+            return { salesNeeded, salesPerMonth, salesMeetingsNeeded };
         }
         
         document.getElementById('underwriting-calculator-form').addEventListener('submit', function(event) {
@@ -154,18 +168,12 @@
                 return;
             }
         
+            isSubmissionMode = true;
             const loading = document.getElementById('loading');
             loading.classList.remove('hidden');
         
             setTimeout(() => {
-                const extraIncome = parseFloat(document.getElementById('extra-income').value);
-                const timeWindow = parseFloat(document.getElementById('time-window').value);
-                const averageInvestment = parseFloat(document.getElementById('average-investment').value);
-                const conversionPercentage = parseFloat(document.getElementById('conversion-percentage').value) / 100;
-        
-                const salesNeeded = Math.ceil(extraIncome / averageInvestment);
-                const salesPerMonth = Math.ceil(salesNeeded / timeWindow);
-                const salesMeetingsNeeded = Math.ceil(salesNeeded / conversionPercentage);
+                const { salesNeeded, salesPerMonth, salesMeetingsNeeded } = calculateValues();
         
                 document.getElementById('sales-needed').innerText = formatNumber(salesNeeded);
                 document.getElementById('sales-per-month').innerText = formatNumber(salesPerMonth);
@@ -178,35 +186,33 @@
         
         document.getElementById('cta-button').addEventListener('click', function() {
             document.getElementById('modal').style.display = 'flex';
+            document.querySelector('.close').style.display = 'block';
+            document.querySelector('.close').addEventListener('click', handleCloseClick);
+            window.addEventListener('click', handleWindowClick);
         });
         
-        document.querySelector('.close').addEventListener('click', function() {
-            document.getElementById('modal').style.display = 'none';
-        });
-        
-        window.addEventListener('click', function(event) {
-            const modal = document.getElementById('modal');
-            if (event.target == modal) {
-                modal.style.display = 'none';
+        function handleCloseClick(event) {
+            if (isSubmissionMode) {
+                event.stopImmediatePropagation();
+                alert('You cannot close the modal until you submit the form.');
             }
-        });
+        }
+        
+        function handleWindowClick(event) {
+            const modal = document.getElementById('modal');
+            if (event.target === modal && isSubmissionMode) {
+                event.stopImmediatePropagation();
+                alert('You cannot close the modal until you submit the form.');
+            }
+        }
         
         document.getElementById('details-form').addEventListener('submit', function(event) {
             event.preventDefault();
-            this.style.display = 'none';
-        
+            
             const fullName = document.getElementById('full-name').value;
             const email = document.getElementById('email').value;
             const phone = document.getElementById('phone').value;
-        
-            const extraIncome = parseFloat(document.getElementById('extra-income').value);
-            const timeWindow = parseFloat(document.getElementById('time-window').value);
-            const averageInvestment = parseFloat(document.getElementById('average-investment').value);
-            const conversionPercentage = parseFloat(document.getElementById('conversion-percentage').value) / 100;
-        
-            const salesNeeded = Math.ceil(extraIncome / averageInvestment);
-            const salesPerMonth = Math.ceil(salesNeeded / timeWindow);
-            const salesMeetingsNeeded = Math.ceil(salesNeeded / conversionPercentage);
+            const { salesNeeded, salesPerMonth, salesMeetingsNeeded } = calculateValues();
         
             fetch('https://nodejs-production-27d5.up.railway.app/proxy', {
                 method: 'POST',
@@ -217,32 +223,42 @@
                     fullName,
                     email,
                     phone,
-                    extraIncome,
-                    timeWindow,
-                    averageInvestment,
-                    conversionPercentage,
+                    extraIncome: parseFloat(document.getElementById('extra-income').value),
+                    timeWindow: parseFloat(document.getElementById('time-window').value),
+                    averageInvestment: parseFloat(document.getElementById('average-investment').value),
+                    conversionPercentage: parseFloat(document.getElementById('conversion-percentage').value) / 100,
                     salesNeeded,
                     salesPerMonth,
                     salesMeetingsNeeded
                 })
-            }).then(response => {
+            })
+            .then(response => {
                 if (response.ok) {
-                    document.getElementById('thank-you-message').classList.remove('hidden');
-                    setTimeout(() => {
-                        document.getElementById('modal').style.display = 'none';
-                        document.getElementById('details-form').reset();
-                        document.getElementById('details-form').style.display = 'block';
-                        document.getElementById('thank-you-message').classList.add('hidden');
-                    }, 3000);
+                    this.style.display = 'none';
+                    document.getElementById('cta-button').textContent = 'Get More Details';
+                    document.getElementById('modal').style.display = 'none';
+                    isSubmissionMode = false;
                 } else {
-                    alert("There was an issue with your submission. Please try again.");
-                    document.getElementById('details-form').style.display = 'block';
+                    throw new Error('Network response was not ok.');
                 }
-            }).catch((error) => {
+            })
+            .catch(error => {
                 console.error('Error:', error);
                 alert("There was an issue with your submission. Please try again.");
-                document.getElementById('details-form').style.display = 'block';
             });
+        });
+        
+        document.getElementById('cta-button').addEventListener('click', function() {
+            if (this.textContent === 'Get More Details') {
+                document.getElementById('thank-you-message').classList.remove('hidden');
+                document.getElementById('modal').style.display = 'flex';
+                document.getElementById('details-form').style.display = 'none';
+                
+                setTimeout(() => {
+                    document.getElementById('modal').style.display = 'none';
+                    document.getElementById('thank-you-message').classList.add('hidden');
+                }, 3000);
+            }
         });
     </script>
 </body>
