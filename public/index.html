@@ -33,7 +33,7 @@
                     </div>
                     
                     <div class="mb-4 relative">
-                        <label class="block text-sm font-medium text-gray-700 mb-2" for="average-investment">How much do you gross on average per client? </label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2" for="average-investment">How much do you gross on average per client?</label>
                         <div class="relative">
                             <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
                                 <i class="fas fa-dollar-sign"></i>
@@ -51,6 +51,7 @@
                             <input class="pl-8 w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-color" type="number" id="sales-meetings" name="sales-meetings" placeholder="Enter number of meetings" aria-label="Sales Meetings per Month">
                         </div>
                     </div>
+                    
                     <div class="mb-4 relative">
                         <label class="block text-sm font-medium text-gray-700 mb-2" for="sales-per-month">Sales per month:</label>
                         <div class="relative">
@@ -60,11 +61,12 @@
                             <input class="pl-8 w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-color" type="number" id="sales-per-month" name="sales-per-month" placeholder="Enter total sales" aria-label="Sales per Month">
                         </div>
                     </div>
-            
+                
                     <button type="submit" class="w-full bg-yellow-400 text-black font-semibold py-2 px-4 rounded-md hover:bg-yellow-500 transition duration-300">
                         <i class="fas fa-calculator mr-2"></i> CALCULATE
                     </button>
                 </form>
+
             </div>
             <div class="w-full md:w-1/2 bg-gray-800 text-white p-6 md:p-8 flex flex-col justify-center" style="background-image: url('SEANS-DARK-PIC.jpg'); background-size: cover; background-position: center; background-blend-mode: overlay; background-color: rgba(22, 22, 22, 0.8);">
                 <div id="loading" class="hidden mb-6 text-center">
@@ -172,12 +174,13 @@
         
         function calculateValues() {
             const extraIncome = parseFloat(document.getElementById('extra-income').value);
-            const timeWindow = parseFloat(document.getElementById('time-window').value);
+            const timeWindow = 1; // Setting timeWindow to 1 by default
             const averageInvestment = parseFloat(document.getElementById('average-investment').value);
-            const conversionPercentage = parseFloat(document.getElementById('conversion-percentage').value) / 100;
+            const salesMeetingsPerMonth = parseFloat(document.getElementById('sales-meetings').value);
+            const salesPerMonth = parseFloat(document.getElementById('sales-per-month').value);
+            const conversionPercentage = salesMeetingsPerMonth / salesPerMonth; // Calculating conversionPercentage
         
             const salesNeeded = Math.ceil(extraIncome / averageInvestment);
-            const salesPerMonth = Math.ceil(salesNeeded / timeWindow);
             const salesMeetingsNeeded = Math.ceil(salesNeeded / conversionPercentage);
         
             return { 
@@ -186,11 +189,12 @@
                 averageInvestment, 
                 conversionPercentage, 
                 salesNeeded, 
+                salesMeetingsPerMonth, 
                 salesPerMonth, 
                 salesMeetingsNeeded 
             };
         }
-        
+
         document.getElementById('underwriting-calculator-form').addEventListener('submit', function(event) {
             event.preventDefault();
         
