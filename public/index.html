@@ -181,6 +181,7 @@
             const conversionPercentage = salesMeetingsPerMonth / salesPerMonth; // Calculating conversionPercentage
         
             const salesNeeded = Math.ceil(extraIncome / averageInvestment);
+            const salesPerMonth = Math.ceil(salesNeeded / timeWindow);
             const salesMeetingsNeeded = Math.ceil(salesNeeded / conversionPercentage);
         
             return { 
